@@ -1,13 +1,12 @@
-# Contributing to Js_of_ocaml
+# Contributing to Js_of_ocaml-ocamlbuild
 
 ## Reporting Issues
 
-If you encounter a problem when using js_of_ocaml or if you have any questions, please open a [GitHub issue](https://github.com/ocsigen/js_of_ocaml/issues/).
+If you encounter a problem when using js_of_ocaml-ocamlbuild or if you have any questions, please open a [GitHub issue](https://github.com/ocsigen/js_of_ocaml-ocamlbuild/issues/).
 
-1. Check first if your issue has already been [reported](https://github.com/ocsigen/js_of_ocaml/issues/).
-2. Include the version of ocaml and js_of_ocaml you are using (`ocamlc -version`, `js_of_ocaml --version`).
-3. Describe the expected and actual behavior.
-4. Do not unsubscribe from the issue until it is closed, the maintainers may ask for your feedback.
+1. Check first if your issue has already been [reported](https://github.com/ocsigen/js_of_ocaml-ocamlbuild/issues/).
+2. Describe the expected and actual behavior.
+3. Do not unsubscribe from the issue until it is closed, the maintainers may ask for your feedback.
 
 ## Pull Requests
 
@@ -22,14 +21,9 @@ We actively welcome pull requests.
 
 ### Install dependencies
 ```
-opam install --deps-only -t js_of_ocaml js_of_ocaml-lwt js_of_ocaml-compiler js_of_ocaml-ocamlbuild js_of_ocaml-toplevel js_of_ocaml-ppx js_of_ocaml-ppx_deriving_json js_of_ocaml-tyxml
-opam install odoc lwt_log cohttp-lwt-unix yojson ocp-indent graphics higlo
+opam install --deps-only -t js_of_ocaml-ocamlbuild
 ```
 
 ### Running the tests
-
-Tests are maintained for a single version of the OCaml compiler (currently 4.13).
-
-Make sure to use the correct opam switch (e.g. `opam switch 4.13.1`).
 
 Run `make tests`.

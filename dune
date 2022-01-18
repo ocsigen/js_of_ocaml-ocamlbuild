@@ -3,14 +3,10 @@
   (flags
    (:standard -w +a-4-40-41-42-44-48-58-66-70))))
 
-(rule
- (targets version.ml.in)
- (action
-  (with-stdout-to
-   %{targets}
-   (run
-    %{dep:tools/version/gen/gen.exe}
-    %{dep:VERSION}
-    %{dep:tools/version/GIT-VERSION}))))
+(library
+ (name ocamlbuild_js_of_ocaml)
+ (public_name js_of_ocaml-ocamlbuild)
+ (synopsis "Js_of_ocaml ocamlbuild plugin")
+ (libraries ocamlbuild str))
 
 (data_only_dirs _wikidoc doc-dev)
