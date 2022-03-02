@@ -1,0 +1,14 @@
+(rule
+ (alias runtest)
+ (deps
+  (source_tree .)
+  (package js_of_ocaml-ocamlbuild))
+ (action
+  (progn
+   (run
+    ocamlbuild
+    -use-ocamlfind
+    -plugin-tag
+    "package(js_of_ocaml-ocamlbuild)"
+    test.js)
+   (run node _build/test.js))))

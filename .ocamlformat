@@ -10,4 +10,4 @@ break-separators=before
 dock-collection-brackets=false
 margin=90
 module-item-spacing=sparse
-version=0.20.0
+version=0.20.1

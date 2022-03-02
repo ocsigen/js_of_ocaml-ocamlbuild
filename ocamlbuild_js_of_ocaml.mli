@@ -50,7 +50,7 @@
 
    Build a JavaScript program {b myprog.js} by calling the command:
    {[
-     ocamlbuild -use-ocamlfind -plugin-tag "package(js_of_ocaml.ocamlbuild)" myprog.js
+     ocamlbuild -use-ocamlfind -plugin-tag "package(js_of_ocaml-ocamlbuild)" myprog.js
    ]}
    It will first build the bytecode {b myprog.byte} and finally produce {b myprog.js} (in {b _build}).
 

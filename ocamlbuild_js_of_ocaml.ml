@@ -43,7 +43,7 @@ let ocamlfind cmd f =
   let cmd = p "ocamlfind query %s" (String.concat " " cmd) in
   Pack.My_unix.run_and_open cmd (fun ic -> fold (fun () -> f ic))
 
-let link_opts prod =
+let runtime_files prod =
   let all_pkgs, predicates =
     let tags = Tags.elements (tags_of_pathname prod) in
     let pkgs = fold_pflag (fun x -> Scanf.sscanf x "package(%[^)])") tags in
@@ -54,12 +54,14 @@ let link_opts prod =
   (* It doesn't do it with 'query' command, we have to it manually. *)
   let cmd = "-format" :: "pkg_%p" :: "-r" :: all_pkgs in
   let predicates_pkgs = ocamlfind cmd (fun ic -> input_line ic) in
-  let all_predicates =
-    String.concat "," (("javascript" :: predicates) @ predicates_pkgs)
+  let all_predicates = String.concat "," (predicates @ predicates_pkgs) in
+  (* query findlib for jsoo runtime files *)
+  let cmd =
+    "-format" :: "%+(jsoo_runtime)" :: "-r" :: "-predicates" :: all_predicates :: all_pkgs
   in
-  (* query findlib for linking option *)
-  let cmd = "-o-format" :: "-r" :: "-predicates" :: all_predicates :: all_pkgs in
-  ocamlfind cmd (fun ic -> A (input_line ic))
+  ocamlfind cmd (fun ic ->
+      let s = String.trim (input_line ic) in
+      if String.length s = 0 then N else A s)
 
 let init () =
   let dep = "%.byte" in
@@ -67,18 +69,9 @@ let init () =
   let f env _ =
     let dep = env dep in
     let prod = env prod in
-    let link_opts = link_opts prod in
+    let link_opts = runtime_files prod in
     let tags = tags_of_pathname prod ++ "js_of_ocaml" in
-    Cmd
-      (S
-         [ A "js_of_ocaml"
-         ; A "--no-runtime"
-         ; T tags
-         ; S link_opts
-         ; A "-o"
-         ; Px prod
-         ; P dep
-         ])
+    Cmd (S [ A "js_of_ocaml"; T tags; S link_opts; A "-o"; Px prod; P dep ])
   in
   rule "js_of_ocaml: .byte -> .js" ~dep ~prod f;
   flag [ "js_of_ocaml"; "debug" ] (S [ A "--pretty"; A "--debug-info"; A "--source-map" ]);
