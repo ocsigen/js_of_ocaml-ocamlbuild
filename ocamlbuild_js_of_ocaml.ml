@@ -25,10 +25,12 @@ let fold f =
   let l = ref [] in
   (try
      while true do
-       l @:= [ f () ]
+       match f () with
+       | None -> ()
+       | Some x -> l := x :: !l
      done
    with _ -> ());
-  !l
+  List.rev !l
 
 let split_comma = Str.split_delim (Str.regexp " *[, ] *")
 
@@ -43,7 +45,7 @@ let ocamlfind cmd f =
   let cmd = p "ocamlfind query %s" (String.concat " " cmd) in
   Pack.My_unix.run_and_open cmd (fun ic -> fold (fun () -> f ic))
 
-let link_opts prod =
+let packages_and_predicates prod =
   let all_pkgs, predicates =
     let tags = Tags.elements (tags_of_pathname prod) in
     let pkgs = fold_pflag (fun x -> Scanf.sscanf x "package(%[^)])") tags in
@@ -53,32 +55,42 @@ let link_opts prod =
   (* Findlib usually set pkg_* predicate for all selected packages *)
   (* It doesn't do it with 'query' command, we have to it manually. *)
   let cmd = "-format" :: "pkg_%p" :: "-r" :: all_pkgs in
-  let predicates_pkgs = ocamlfind cmd (fun ic -> input_line ic) in
-  let all_predicates =
-    String.concat "," (("javascript" :: predicates) @ predicates_pkgs)
-  in
-  (* query findlib for linking option *)
-  let cmd = "-o-format" :: "-r" :: "-predicates" :: all_predicates :: all_pkgs in
-  ocamlfind cmd (fun ic -> A (input_line ic))
+  let predicates_pkgs = ocamlfind cmd (fun ic -> Some (input_line ic)) in
+  all_pkgs, predicates @ predicates_pkgs
 
-let init () =
+let old_linkopts prod =
+  let all_pkgs, all_predicates = packages_and_predicates prod in
+  let predicates = String.concat "," ("javascript" :: all_predicates) in
+  (* query findlib for linking option *)
+  let cmd = "-o-format" :: "-r" :: "-predicates" :: predicates :: all_pkgs in
+  ocamlfind cmd (fun ic ->
+      let s = String.trim (input_line ic) in
+      if String.length s = 0 then None else Some s)
+
+let runtime_files prod =
+  let all_pkgs, all_predicates = packages_and_predicates prod in
+  let predicates = String.concat "," all_predicates in
+  (* query findlib for jsoo runtime files *)
+  let cmd =
+    "-format" :: "%+(jsoo_runtime)" :: "-r" :: "-predicates" :: predicates :: all_pkgs
+  in
+  ocamlfind cmd (fun ic ->
+      let s = String.trim (input_line ic) in
+      if String.length s = 0 then None else Some s)
+
+let init mode =
   let dep = "%.byte" in
   let prod = "%.js" in
   let f env _ =
     let dep = env dep in
     let prod = env prod in
-    let link_opts = link_opts prod in
+    let link_opts =
+      match mode with
+      | `Default -> List.map (fun x -> P x) (runtime_files prod)
+      | `Legacy -> List.map (fun x -> A x) (old_linkopts prod)
+    in
     let tags = tags_of_pathname prod ++ "js_of_ocaml" in
-    Cmd
-      (S
-         [ A "js_of_ocaml"
-         ; A "--no-runtime"
-         ; T tags
-         ; S link_opts
-         ; A "-o"
-         ; Px prod
-         ; P dep
-         ])
+    Cmd (S [ A "js_of_ocaml"; T tags; S link_opts; A "-o"; Px prod; P dep ])
   in
   rule "js_of_ocaml: .byte -> .js" ~dep ~prod f;
   flag [ "js_of_ocaml"; "debug" ] (S [ A "--pretty"; A "--debug-info"; A "--source-map" ]);
@@ -93,7 +105,7 @@ let oasis_support ~executables =
   let aux x = if List.mem x executables then Pathname.update_extension "js" x else x in
   Options.targets := List.map aux !Options.targets
 
-let dispatcher ?(oasis_executables = []) = function
-  | After_rules -> init ()
+let dispatcher ?(mode = `Default) ?(oasis_executables = []) = function
+  | After_rules -> init mode
   | After_options -> oasis_support ~executables:oasis_executables
   | _ -> ()

@@ -50,7 +50,7 @@
 
    Build a JavaScript program {b myprog.js} by calling the command:
    {[
-     ocamlbuild -use-ocamlfind -plugin-tag "package(js_of_ocaml.ocamlbuild)" myprog.js
+     ocamlbuild -use-ocamlfind -plugin-tag "package(js_of_ocaml-ocamlbuild)" myprog.js
    ]}
    It will first build the bytecode {b myprog.byte} and finally produce {b myprog.js} (in {b _build}).
 
@@ -81,16 +81,21 @@
    {2 Dispatchers} *)
 
 val dispatcher :
-  ?oasis_executables:Ocamlbuild_plugin.Pathname.t list -> Ocamlbuild_plugin.hook -> unit
+     ?mode:[ `Default | `Legacy ]
+  -> ?oasis_executables:Ocamlbuild_plugin.Pathname.t list
+  -> Ocamlbuild_plugin.hook
+  -> unit
 (** The main dispatcher
 
-    [?oasis_executables] is the paths of the executables
-    (having the .byte extension) you want to compile
-    as a javascript executable. The former executables are still compiled.
+    [?mode:`Legacy] can be used to fallback to the old way of querying
+    findlib for javascript runtime files.
 
-    Side note: {!Ocamlbuild_plugin.dispatch} should be used only once as
-    it record only one function for an ocamlbuild module.
-*)
+    [?oasis_executables] is the paths of the executables (having the
+    .byte extension) you want to compile as a javascript
+    executable. The former executables are still compiled.
+
+    Side note: {!Ocamlbuild_plugin.dispatch} should be used only once
+    as it record only one function for an ocamlbuild module.  *)
 
 (** {2 Low level functions} *)
 
