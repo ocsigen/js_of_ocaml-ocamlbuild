@@ -26,13 +26,14 @@ jobs:
           - 4.10.x
           - 4.11.x
           - 4.12.x
+          - 4.13.x
         include:
           - os: ubuntu-latest
-            ocaml-compiler: 4.13.x
+            ocaml-compiler: 4.14.x
           - os: macos-latest
-            ocaml-compiler: 4.13.x
+            ocaml-compiler: 4.14.x
           - os: windows-latest
-            ocaml-compiler: 4.13.x
+            ocaml-compiler: 4.14.x
 
     runs-on: ${{ matrix.os }}
 
@@ -44,7 +45,7 @@ jobs:
           git config --global core.ignorecase false
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use OCaml ${{ matrix.ocaml-compiler }}
         uses: ocaml/setup-ocaml@v2
@@ -62,23 +63,16 @@ jobs:
       - run: opam exec -- git diff --exit-code
 
   lint-fmt:
-    strategy:
-      matrix:
-        ocaml-compiler:
-          - 4.13.x
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+      - name: Use OCaml 4.14.x
         uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          ocaml-compiler: 4.14.x
           dune-cache: true
 
-      - run: opam depext ocamlformat=$(cat .ocamlformat | grep version | cut -d '=' -f 2) --install
-
-      - run: opam exec -- dune build @fmt
+      - name: Lint fmt
+        uses: ocaml/setup-ocaml/lint-fmt@v2
