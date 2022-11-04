@@ -12,7 +12,8 @@ depends: [
   "dune" {>= "2.9"}
   "ocaml" {>= "4.04"}
   "ocamlbuild"
-  "ocamlfind" {with-test}
+  "js_of_ocaml" {with-test}
+  "js_of_ocaml-compiler" {with-test}
   "base" {with-test}
   "odoc" {with-doc}
 ]
