@@ -5,7 +5,7 @@ description:
   "An ocamlbuild plugin to compile to JavaScript using js_of_ocaml"
 maintainer: ["Ocsigen team <dev@ocsigen.org>"]
 authors: ["Ocsigen team <dev@ocsigen.org>"]
-license: ["LGPL-2.1-or-later"]
+license: "LGPL-2.1-or-later"
 homepage: "https://github.com/ocsigen/js_of_ocaml-ocamlbuild"
 bug-reports: "https://github.com/ocsigen/js_of_ocaml-ocamlbuild/issues"
 depends: [
