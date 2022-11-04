@@ -12,6 +12,8 @@ depends: [
   "dune" {>= "2.9"}
   "ocaml" {>= "4.04"}
   "ocamlbuild"
+  "ocamlfind" {with-test}
+  "base" {with-test}
   "odoc" {with-doc}
 ]
 dev-repo: "git+https://github.com/ocsigen/js_of_ocaml-ocamlbuild.git"
