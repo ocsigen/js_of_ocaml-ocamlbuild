@@ -5,13 +5,17 @@ description:
   "An ocamlbuild plugin to compile to JavaScript using js_of_ocaml"
 maintainer: ["Ocsigen team <dev@ocsigen.org>"]
 authors: ["Ocsigen team <dev@ocsigen.org>"]
-license: ["LGPL-2.1-or-later"]
+license: "LGPL-2.1-or-later"
 homepage: "https://github.com/ocsigen/js_of_ocaml-ocamlbuild"
 bug-reports: "https://github.com/ocsigen/js_of_ocaml-ocamlbuild/issues"
 depends: [
   "dune" {>= "2.9"}
   "ocaml" {>= "4.04"}
   "ocamlbuild"
+  "ocamlfind" {with-test}
+  "js_of_ocaml" {with-test}
+  "js_of_ocaml-compiler" {with-test}
+  "base" {with-test}
   "odoc" {with-doc}
 ]
 dev-repo: "git+https://github.com/ocsigen/js_of_ocaml-ocamlbuild.git"

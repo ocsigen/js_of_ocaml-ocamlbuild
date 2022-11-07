@@ -8,8 +8,7 @@
 (maintainers "Ocsigen team <dev@ocsigen.org>")
 (source (github ocsigen/js_of_ocaml-ocamlbuild))
 (homepage "https://github.com/ocsigen/js_of_ocaml-ocamlbuild")
-(documentation "https://github.com/ocsigen/js_of_ocaml-ocamlbuild")
-(license "GPL-2.0-or-later AND LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception")
+(license "LGPL-2.1-or-later")
 
 (package
  (name js_of_ocaml-ocamlbuild)
@@ -19,4 +18,8 @@
  (depends
   (ocaml (>= 4.04))
   ocamlbuild
+  (ocamlfind :with-test)
+  (js_of_ocaml :with-test)
+  (js_of_ocaml-compiler :with-test)
+  (base :with-test)
 ))
